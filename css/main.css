@@ -1,0 +1,110 @@
+/* == Général == */
+
+body {
+	width: 650px;
+	overflow-x: hidden;
+	overflow-y: auto;
+	background-color: #FDFDFD;
+}
+
+.message_center {
+	text-align: center;
+}
+
+.cutIfTooLong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* == Header de l'extension  == */
+
+#header, #welcome {
+    padding-top: 10px;
+
+}
+
+#welcome_zone {
+    padding-bottom: 10px;
+    border-bottom-style: solid;
+    border-bottom-color: #ffffff;
+    border-width: 1px;
+}
+
+#logo {
+	margin-right: 10px;
+	padding-top: 14px;
+	float: left;
+}
+
+.navbar .divider-vertical {
+	margin: 0px;
+}
+
+/* == Actualités == */
+
+.header_date {
+	border-style: solid;
+}
+
+.bloc-date, .bloc-fin {
+	background-color: #000000;
+	border-color: #000000;
+	color: #ffffff;
+	width: 50%;
+	font-weight: bold;
+	padding: 10px 20px 10px 20px;
+	margin: auto;
+	margin-bottom: 15px;
+	margin-top: 10px;
+}
+
+.bloc-fin {
+	width: 40%;
+	margin-bottom: 10px;
+}
+
+.bloc-fin:hover {
+	color: orange;
+}
+
+.bloc_actu {
+	padding-bottom: 10px;
+	width: 95%;
+	margin: auto;
+	margin-bottom: 10px;
+	border-bottom-style: groove;
+}
+
+.bloc_actu a, .black_link a {
+	color: #000000;
+	font-weight: bold;
+}
+
+.bloc_actu a:hover, .black_link a:hover {
+	color: #DA7012;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+.ss_titre {
+	font-size: x-small;
+}
+
+.ss_titre a {
+	color: white;
+	font-weight: bold;
+}
+
+.comment_bloc {
+	float: right;
+}
+
+/* == Footer == */
+
+#footer {
+	float: right;
+	text-align: center;
+	width: 350px;
+	margin-top: 10px;
+	padding-left: 10px;
+	padding-right: 5px;
+}

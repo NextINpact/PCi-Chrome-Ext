@@ -1,0 +1,37 @@
+﻿{
+    "name":"PC INpact Toolkit for Chrome™",
+    "version":"0.4.0.0",
+    "manifest_version":2,
+
+    "description":"Le meilleur de PC INpact au sein d'une seule et même extension.",
+    "tooltip":"PC INpact Toolkit for Chrome™",
+    "icons":{
+        "48":"pics/pci-48.png",
+        "96":"pics/pci-96.png",
+        "128":"pics/pci-128.png",
+        "256":"pics/pci-256.png"
+    },
+
+    "browser_action":{
+        "default_title":"PC INpact Toolkit for Chrome™",
+        "default_icon":"pics/pci-48.png",
+        "default_popup":"html/main.html"
+    },
+    "omnibox":{
+        "keyword":"pci"
+    },
+    "background":{
+        "page":"html/background.html"
+    },
+
+    "permissions":[
+        "background",
+        "notifications",
+        "tabs",
+        "webRequest",
+        "http://*.pcinpact.com/",
+        "http://*.inpactien.com/",
+        "http://*.prixdunet.com/",
+        "http://*.touslesforfaits.fr/"
+    ]
+}
