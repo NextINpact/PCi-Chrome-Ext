@@ -130,6 +130,7 @@ function show_header(lite) {
             deco_x.id = "menu_deco";
             deco_x.style.cursor = "pointer";
             deco_x.style.color = "white";
+            deco_x.title = "Vous déconnecter de PC INpact";
             welcome_h3.appendChild(deco_x);
 
             // Si l'élément créé est cliqué, on déconnecte l'utilisateur
@@ -153,6 +154,7 @@ function show_header(lite) {
             abo_link.target = "_blank";
             abo_link.innerText = "abonnement Premium";
             abo_link.style.color = "white";
+            abo_link.title = "Abonnez-vous !";
 
             // On rajoute le lien propre aux membres ainsi que le lien vers la zone d'abonnement
             thanks.innerText = " " + txt_inpactien + " ";
