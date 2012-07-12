@@ -302,11 +302,22 @@ function update_content_emploi(div) {
     empty_zone(div);
 
     var messageZone = document.createElement("div");
-    messageZone.innerText = "Fonctionnalité en cours d'implémentation...";
     messageZone.id = "messageZone";
     messageZone.style.fontWeight = "bold";
-    messageZone.className = "well";
+    messageZone.className = "well black_link";
+
+    var txtPart1 = document.createTextNode("Fonctionnalité en cours d'implémentation. En attendant, rendez vous dans notre ");
+    var txtPart2 = document.createTextNode(".");
+
+    var emploiLink = document.createElement("a");
+    emploiLink.href = "http://www.pcinpact.com/emploi/";
+    emploiLink.target = "_blank";
+    emploiLink.innerText = "section emploi";
+
     div.appendChild(messageZone);
+    messageZone.appendChild(emploiLink);
+    emploiLink.parentNode.insertBefore(txtPart1, emploiLink);
+    emploiLink.parentNode.insertBefore(txtPart2,emploiLink.nextSibling);
 
     // On place le focus, cela permet de résoudre le problème de hauteur de la zone
     document.getElementById("messageZone").focus();
@@ -352,6 +363,7 @@ function update_content_forum(div, forumInfos) {
 
         return m_zone;
     };
+
     var appendGagnantInfos = function () {
         var g_zone = document.createElement("div");
         g_zone.style.fontWeight = "bold";
