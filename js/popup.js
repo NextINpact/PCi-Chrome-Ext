@@ -30,7 +30,7 @@ window.addEventListener("DOMContentLoaded", function () {
 
     // On récupère le nombre d'actus / brèves
     var newActusCount;
-    //noinspection JSUnresolvedVariable
+
     chrome.extension.sendRequest({message:"getNewActusCount"}, function (response) {
 
         newActusCount = response;
