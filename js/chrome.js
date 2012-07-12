@@ -38,7 +38,7 @@ function set_badge(text, title, color)
 function notify_txt(icon, title, body)
 {
     // Si l'utilisateur a demandé à ne pas avoir de notifications, on part
-    if(localStorage["notifCkeck"] != 1)
+    if(localStorage["notifCheck"] != 1)
         return;
 
     // On affiche la notification
