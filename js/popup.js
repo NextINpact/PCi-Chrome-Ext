@@ -164,12 +164,13 @@ function show_header(lite) {
     });
 }
 
+// La fonction qui gère l'affichage du footer
 function setFooter(text) {
 
     var footer = document.getElementById("footer");
 
     footer.innerText = text;
-    footer.style.display = (text === "") ? "block" : "none";
+    footer.style.display = (text === "") ? "none" : "block";
 }
 
 // La fonction qui gère le remplissage de la zone principale
@@ -177,6 +178,9 @@ function fill_in_container(type) {
 
     var mainDiv = document.getElementById("bloc_central");
     var footerDiv = document.getElementById("footer");
+
+    // Par défaut on rend le footer invisible, il sera affiché sur demande
+    footerDiv.style.display = "none";
 
     switch (type) {
         case "bp":
@@ -215,8 +219,6 @@ function fill_in_container(type) {
             });
             break;
     }
-
-    footerDiv.style.display = "none";
 }
 
 function update_content_bp(div, bp_infos) {
