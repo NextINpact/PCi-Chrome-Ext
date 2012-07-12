@@ -20,9 +20,6 @@
 // On ne commence le rendu que quand le DOM est validé
 window.addEventListener("DOMContentLoaded", function () {
 
-    // On effectue un RAZ du nombre d'actus / brèves
-    chrome.extension.sendRequest({message:"clearNewActusCount"});
-
     // On rajoute un EventListener sur le menu afin de gérer les clics
     var menu = document.getElementById("menu_list");
     menu.addEventListener("click", function (e) {
@@ -31,26 +28,42 @@ window.addEventListener("DOMContentLoaded", function () {
         fill_in_container(e.target.id)
     }, false);
 
-    // On affiche le header
-    show_header(false);
+    // On récupère le nombre d'actus / brèves
+    var newActusCount;
+    //noinspection JSUnresolvedVariable
+    chrome.extension.sendRequest({message:"getNewActusCount"}, function (response) {
 
-    // On définit la rubrique à ouvrir, et on l'active dans le menu
+        newActusCount = response;
+
+        // On vérifie la rubrique à ouvrir
+        checkSectionToOpen(newActusCount);
+
+        // On effectue un RAZ du nombre d'actus / brèves
+        chrome.extension.sendRequest({message:"clearNewActusCount"});
+
+        // On affiche le header
+        show_header(false);
+
+        // On affiche le contenu de la rubrique demandé
+        fill_in_container(localStorage["lastRub"]);
+    });
+
+}, false);
+
+function checkSectionToOpen(newActusCount) {
+// On définit la rubrique à ouvrir, et on l'active dans le menu
     // Par défaut, ou si le nombre d'actus / brèves à lire est > 0, on ouvre "home"
-    if (!localStorage["lastRub"] || (sessionStorage["newActusCount"] && parseInt(sessionStorage["newActusCount"]) > 0)) localStorage["lastRub"] = "home";
+    if (!localStorage["lastRub"] || (newActusCount && parseInt(newActusCount) > 0)) localStorage["lastRub"] = "home";
+
     // S'il y a des contenus dans le forum, on ouvre "forum"
     else if (localStorage["PCiForumLastCheck"]) {
         var forum_infos = JSON.parse(localStorage["PCiForumLastCheck"]);
         if (forum_infos.messages.count > 0 || forum_infos.notifications.count > 0) localStorage["lastRub"] = "forum";
     }
-
     // Si la rubrique à afficher n'est pas "home", on sélectionne l'élément dédié dans le menu
     // On précise que la demande ne vient pas d'un évènement via "false"
     if (localStorage["lastRub"] != "home") change_menu_state(document.getElementById(localStorage["lastRub"]), false);
-
-    // On affiche le contenu de la rubrique demandé
-    fill_in_container(localStorage["lastRub"]);
-
-}, false);
+}
 
 // La fonction qui gère la sélection des éléments du menu
 function change_menu_state(e, event) {
@@ -119,7 +132,7 @@ function show_header(lite) {
             welcome_h3.appendChild(deco_x);
 
             // Si l'élément créé est cliqué, on déconnecte l'utilisateur
-            document.getElementById("menu_deco").addEventListener("click", function (e) {
+            document.getElementById("menu_deco").addEventListener("click", function () {
                 chrome.tabs.create({"url":"http://www.pcinpact.com/Account/LogOff?url=http%3A%2F%2Fwww.pcinpact.com%2F"});
             });
         }
@@ -241,10 +254,7 @@ function update_content_bp(div, bp_infos) {
 
     div.appendChild(head);
 
-    for (var key in bp_infos.list) {
-        appendBonPlanBloc(bp_infos.list[key]);
-    };
-
+    for (var key in bp_infos.list) appendBonPlanBloc(bp_infos.list[key]);
     var bloc_all = document.createElement("div");
     bloc_all.className = "alert alert-info bloc-fin";
     bloc_all.align = "center";
@@ -253,7 +263,7 @@ function update_content_bp(div, bp_infos) {
     bloc_all.id = "all_bp";
     div.appendChild(bloc_all);
 
-    document.getElementById("all_bp").addEventListener("click", function (e) {
+    document.getElementById("all_bp").addEventListener("click", function () {
         chrome.tabs.create({"url":"http://www.prixdunet.com/bon-plan.html?page=1&type=0&motcle=&order=nb_lectures&waypopu=desc"});
     }, false);
 
@@ -456,7 +466,7 @@ function update_content_news(div, news, type) {
             bloc_all.innerText = "Accéder à toutes les actualités";
             bloc_all.id = "all_actus";
             div.appendChild(bloc_all);
-            document.getElementById("all_actus").addEventListener("click", function (e) {
+            document.getElementById("all_actus").addEventListener("click", function () {
                 chrome.tabs.create({"url":"http://www.pcinpact.com"});
             }, false);
             break;
@@ -465,7 +475,8 @@ function update_content_news(div, news, type) {
             bloc_all.innerText = "Accéder à toutoutes les brèves";
             bloc_all.id = "all_breves";
             div.appendChild(bloc_all);
-            document.getElementById("all_breves").addEventListener("click", function (e) {
+
+            document.getElementById("all_breves").addEventListener("click", function () {
                 chrome.tabs.create({"url":"http://www.pcinpact.com/toutes-les-breves.htm"});
             }, false);
             break;
@@ -641,7 +652,7 @@ function update_content_search(div) {
     appendPdNSearchBloc();
 
     var enablePCiSearchClickButton = function () {
-        document.getElementById("search_pci").addEventListener("click", function (e) {
+        document.getElementById("search_pci").addEventListener("click", function () {
             var url_s_pci = "http://www.pcinpact.com/recherche?_search=" + document.getElementById("search_pci_v").value + "&_searchType=";
             var url_se_pci = "http://www.pcinpact.com/emploi?_page=1&terme=" + document.getElementById("search_pci_v").value;
             
@@ -670,7 +681,7 @@ function update_content_search(div) {
     };
 
     var enablePdNSearchClickButton = function () {
-        document.getElementById("search_pdn").addEventListener("click", function (e) {
+        document.getElementById("search_pdn").addEventListener("click", function () {
             var url_s_pdn = "http://www.prixdunet.com/s/" + document.getElementById("search_pdn_v").value + ".html";
             switch (document.getElementById("search_pdn_s").value) {
                 case "Actualités":

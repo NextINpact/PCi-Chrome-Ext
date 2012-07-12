@@ -1,29 +1,39 @@
 /*  Copyright © 2011-2012 LEGRAND David <david@pcinpact.com>    
-    
-    This file is part of PC INpact Toolkit for Chrome™.
 
-    PC INpact Toolkit for Chrome™ is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+ This file is part of PC INpact Toolkit for Chrome™.
 
-    PC INpact Toolkit for Chrome™ is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ PC INpact Toolkit for Chrome™ is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-    You should have received a copy of the GNU General Public License
-    along with PC INpact Toolkit for Chrome™.  If not, see <http://www.gnu.org/licenses/>. */
+ PC INpact Toolkit for Chrome™ is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with PC INpact Toolkit for Chrome™.  If not, see <http://www.gnu.org/licenses/>. */
 
 // On utilise une IIFE pour éviter la nuisance
 (function () {
 
     'use strict';
 
-    // TODO : Exporter ces valeurs au sein des options
-    localStorage["notifCheck"] = 1;
-    localStorage["notifDelay"] = 10;
-    localStorage["PCiEnableLog"] = 1;
+    // Si ce n'est pas déjà fait, on nettoie le LocalStorage de l'ancienne version de l'extension
+    if (!localStorage["clearLSDone"] || localStorage["clearLSDone"] != "true")
+    {
+        localStorage.clear();
+        localStorage["clearLSDone"] = "true";
+
+        setDefaultValues();
+
+        // Si le LS n'était pas vide, on notifie l'utilisateur qu'il s'agissait d'une mise à jour qui s'est bien déroulée
+        if (localStorage.length != 0)
+            notify_txt("", "", "La mise à jour depuis l'ancienne version de l'extension s'est bien déroulée");
+    }
+
+    setDefaultValues();
 
     // On indique que l'extension est lancée
     PCi.tools.logMessage("Extension lancée", false);
@@ -38,12 +48,12 @@
 
     // On met en place l'analyse des requêtes pour détecter les login / logout
     // On sépare les deux parce que la méthodologie n'est pas la même
-    chrome.webRequest.onResponseStarted .addListener(function (details) {
+    chrome.webRequest.onResponseStarted.addListener(function () {
         update_user_cache();
         PCi.tools.logMessage("Connexion de l'utilisateur");
     }, {urls:["http://www.pcinpact.com/Account/ConnectLogOn*"]});
-    
-    chrome.webRequest.onBeforeRedirect.addListener(function (details) {
+
+    chrome.webRequest.onBeforeRedirect.addListener(function () {
         update_user_cache();
         PCi.tools.logMessage("Déconnexion de l'utilisateur");
     }, {urls:["http://www.pcinpact.com/Account/LogOff*"]});
@@ -53,13 +63,13 @@
     // On met en cache les données des actualités et des utilisateurs
     // On lance une répétiton toutes les minutes
     check_and_get_actus();
-    setInterval(check_and_get_actus, 1 * 60 * 1000);
+    setInterval(check_and_get_actus, 60 * 1000);
 
     UpdateBPCache();
     setInterval(UpdateBPCache, 30 * 60 * 1000);
 
     update_forum_cache();
-    setInterval(update_forum_cache, 1 * 60 * 1000);
+    setInterval(update_forum_cache, 60 * 1000);
 
     update_user_cache();
     setInterval(update_user_cache, 10 * 60 * 1000);
@@ -69,7 +79,7 @@
     // On indique lorsque le premier check a été effectué
     if (!sessionStorage["firstCheck"]) sessionStorage["firstCheck"] = "true";
 
-	// L'objet de gestion du nombre de nouvelles actualités
+    // L'objet de gestion du nombre de nouvelles actualités
     var newActusCount = {
         localVarName:"newActusCount",
 
@@ -79,22 +89,29 @@
 
             // Si un compteur avait déjà été créé, on récupère sa valeur
             if (sessionStorage[newActusCount.localVarName]) countNew = parseInt(sessionStorage[newActusCount.localVarName]);
-            
+
             PCi.tools.logMessage("Nouvelles actus : " + countNew);
             return countNew;
         },
 
         inc:function (newActus) {
             var countNew = newActusCount.get(), countFinal;
-            
+
             // On incrémente le compteur et on l'enregistre
             countFinal = parseInt(countNew) + newActus.length;
             sessionStorage[newActusCount.localVarName] = countFinal;
-            
+
             PCi.tools.logMessage("Compteur : " + countFinal);
         }
 
     };
+
+    // La fonction qui indique les valeurs par défaut
+    function setDefaultValues() {
+        localStorage["notifCheck"] = 1;
+        localStorage["notifDelay"] = 10;
+        localStorage["PCiEnableLog"] = 1;
+    }
 
     // La fonction qui déclare les réponses aux requêtes qui peuvent être envoyées par le popup
     function ListenFromPopup() {
@@ -121,6 +138,10 @@
                     case "clearNewActusCount":
                         sessionStorage[newActusCount.localVarName] = 0;
                         updateBadgeAndNotify("", false);
+                        break;
+
+                    case "getNewActusCount":
+                        sendResponse(newActusCount.get());
                         break;
                 }
             });
@@ -201,7 +222,7 @@
 
             // On affiche une notification pour chaque actualité repérée
             for (var key in newActus) {
-                if (sendNotif) notify_txt("/pics/pci-48.png", "Nouvelle actualité", newActus[key].Title);
+                if (sendNotif) notify_txt("", "Nouvelle actualité", newActus[key].Title);
             }
         }
         // S'il n'y a pas de nouvelles actus, on regarde du côté du forum
@@ -215,7 +236,7 @@
 
                 var forumNotificationText = "Vous avez de nouvelles notifications sur le forum";
                 set_badge("!", forumNotificationText, colorGreen);
-                if (sendNotif) notify_txt("/pics/cible-pci-48.png", forumNotificationText, "");
+                if (sendNotif) notify_txt("", forumNotificationText, "");
             }
             // Sinon, on remet le badge dans son état initial
             else set_badge("", appName, colorBlue);
