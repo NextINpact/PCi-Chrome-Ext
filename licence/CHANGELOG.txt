@@ -12,7 +12,14 @@ Forum : http://pci.im/forum-pci-chrome
 
 ---------------
 ---------------
-v0.4.0.0 (10/07/2012) :
+v0.4.0.2 (10/07/2012) :
+- Mise en place des notifications
+- Système de nettoyage du LocalStorage des versions 0.3 et inférieures
+- Correction du problème des utilisateurs non connectés depuis le forum
+- Amélioration de la sélection de la rubrique ouverte
+- Nettoyage du code
+
+v0.4.0.1 (10/07/2012) :
 - Refonte complète de l'interface graphique (Bootstrap)
 - Refonte complète du code
 - Utilisation de la nouvelle version de la PCi JS Lib
