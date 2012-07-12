@@ -21,8 +21,7 @@
     'use strict';
 
     // Si ce n'est pas déjà fait, on nettoie le LocalStorage de l'ancienne version de l'extension
-    if (!localStorage["clearLSDone"] || localStorage["clearLSDone"] != "true")
-    {
+    if (!localStorage["clearLSDone"] || localStorage["clearLSDone"] != "true") {
         localStorage.clear();
         localStorage["clearLSDone"] = "true";
 
@@ -176,11 +175,12 @@
                 localStorage["PCiForumLastCheck"] = JSON.stringify(forumInfos);
             });
 
-            // S'il y a de nouveaux contenus, on met à jour le badge et on affiche des notifications
+            // On récupère l'objet dans une variable
             var forum_infos = JSON.parse(localStorage["PCiForumLastCheck"]);
-            if (forum_infos.messages.count > 0 || forum_infos.notifications.count > 0) {
+
+            // Si l'on a récupéré des informations depuis le forum et que des messages sont présents, on lance une mise à jour du badge
+            if (forum_infos.messages && forum_infos.notifications && (forum_infos.messages.count > 0 || forum_infos.notifications.count > 0))
                 updateBadgeAndNotify("", true);
-            }
         }
             // Si une erreur intervient, on la loggue
         catch (e) {
@@ -232,7 +232,7 @@
             var forum_infos = JSON.parse(localStorage["PCiForumLastCheck"]);
 
             // S'il y a de nouveaux contenus, on met à jour le badge et on affiche des notifications
-            if (forum_infos.messages.count > 0 || forum_infos.notifications.count > 0) {
+            if (forum_infos.messages && forum_infos.notifications && (forum_infos.messages.count > 0 || forum_infos.notifications.count > 0)) {
 
                 var forumNotificationText = "Vous avez de nouvelles notifications sur le forum";
                 set_badge("!", forumNotificationText, colorGreen);

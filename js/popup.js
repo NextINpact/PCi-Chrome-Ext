@@ -1,20 +1,20 @@
 /*  Copyright © 2011-2012 LEGRAND David <david@pcinpact.com>    
-    
-    This file is part of PC INpact Toolkit for Chrome™.
 
-    PC INpact Toolkit for Chrome™ is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+ This file is part of PC INpact Toolkit for Chrome™.
 
-    PC INpact Toolkit for Chrome™ is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ PC INpact Toolkit for Chrome™ is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-    You should have received a copy of the GNU General Public License
-    along with PC INpact Toolkit for Chrome™.  If not, see <http://www.gnu.org/licenses/>. */
-   
+ PC INpact Toolkit for Chrome™ is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with PC INpact Toolkit for Chrome™.  If not, see <http://www.gnu.org/licenses/>. */
+
 'use strict';
 
 // On ne commence le rendu que quand le DOM est validé
@@ -58,9 +58,10 @@ function checkSectionToOpen(newActusCount) {
     // S'il y a des contenus dans le forum, on ouvre "forum"
     else if (localStorage["PCiForumLastCheck"]) {
         var forum_infos = JSON.parse(localStorage["PCiForumLastCheck"]);
-        if (forum_infos.messages.count > 0 || forum_infos.notifications.count > 0) localStorage["lastRub"] = "forum";
+        if (forum_infos.messages && forum_infos.notifications && (forum_infos.messages.count > 0 || forum_infos.notifications.count > 0)) localStorage["lastRub"] = "forum";
     }
-    // Si la rubrique à afficher n'est pas "home", on sélectionne l'élément dédié dans le menu
+
+    // Sinon et si la rubrique à afficher n'est pas "home", on sélectionne l'élément dédié dans le menu
     // On précise que la demande ne vient pas d'un évènement via "false"
     if (localStorage["lastRub"] != "home") change_menu_state(document.getElementById(localStorage["lastRub"]), false);
 }
@@ -191,7 +192,7 @@ function fill_in_container(type) {
         case "emploi":
             update_content_emploi(mainDiv);
             break;
-            
+
         case "forum":
             chrome.extension.sendRequest({message:"ask_forum_cache"}, function (response) {
                 update_content_forum(mainDiv, response);
@@ -294,18 +295,17 @@ function update_content_cal(div) {
 }
 
 // La fonction qui gère la zone dédié aux emplois
-function update_content_emploi(div)
-{
+function update_content_emploi(div) {
     // On vide la zone
     empty_zone(div);
-    
+
     var messageZone = document.createElement("div");
     messageZone.innerText = "Fonctionnalité en cours d'implémentation...";
     messageZone.id = "messageZone";
     messageZone.style.fontWeight = "bold";
     messageZone.className = "well";
     div.appendChild(messageZone);
-    
+
     // On place le focus, cela permet de résoudre le problème de hauteur de la zone
     document.getElementById("messageZone").focus();
 }
@@ -655,7 +655,7 @@ function update_content_search(div) {
         document.getElementById("search_pci").addEventListener("click", function () {
             var url_s_pci = "http://www.pcinpact.com/recherche?_search=" + document.getElementById("search_pci_v").value + "&_searchType=";
             var url_se_pci = "http://www.pcinpact.com/emploi?_page=1&terme=" + document.getElementById("search_pci_v").value;
-            
+
             switch (document.getElementById("search_pci_s").value) {
                 case "Actualités":
                     url_s_pci += "1";
