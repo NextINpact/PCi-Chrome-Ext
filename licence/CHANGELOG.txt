@@ -12,7 +12,7 @@ Forum : http://pci.im/forum-pci-chrome
 
 ---------------
 ---------------
-v0.4.0.2 (10/07/2012) :
+v0.4.0.2 (12/07/2012) :
 - Mise en place des notifications
 - Système de nettoyage du LocalStorage des versions 0.3 et inférieures
 - Correction du problème des utilisateurs non connectés depuis le forum
