@@ -196,7 +196,9 @@ function fill_in_container(type) {
             break;
 
         case "emploi":
-            update_content_emploi(mainDiv);
+            chrome.extension.sendRequest({message:"askEmploiCache"}, function (response) {
+                update_content_emploi(mainDiv, response);
+            });
             break;
 
         case "forum":
@@ -299,27 +301,37 @@ function update_content_cal(div) {
 }
 
 // La fonction qui gère la zone dédié aux emplois
-function update_content_emploi(div) {
+function update_content_emploi(div, data) {
     // On vide la zone
     empty_zone(div);
 
-    var messageZone = document.createElement("div");
-    messageZone.id = "messageZone";
-    messageZone.style.fontWeight = "bold";
-    messageZone.className = "well black_link";
+    var offres = data.list, lastUpdate = data.lastUpdateDate;
+    if (offres.length === 0) {
+        var message = document.createElement("p");
+        message.innerText = "Aucune offre d'emploi n'a été trouvée. Un problème ? Retrouvez les ";
+        message.className = "alert alert-error message_center";
 
-    var txtPart1 = document.createTextNode("Fonctionnalité en cours d'implémentation. En attendant, rendez vous dans notre ");
-    var txtPart2 = document.createTextNode(".");
+        var link = document.createElement("a");
+        link.innerText = "sur notre site";
+        link.href = "http://www.pcinpact.com/emploi/";
+        link.target = "_blank";
 
-    var emploiLink = document.createElement("a");
-    emploiLink.href = "http://www.pcinpact.com/emploi/";
-    emploiLink.target = "_blank";
-    emploiLink.innerText = "section emploi";
+        var point = document.createTextNode(".");
 
-    div.appendChild(messageZone);
-    messageZone.appendChild(emploiLink);
-    emploiLink.parentNode.insertBefore(txtPart1, emploiLink);
-    emploiLink.parentNode.insertBefore(txtPart2,emploiLink.nextSibling);
+        div.appendChild(message);
+        message.appendChild(link);
+        message.appendChild(point);
+    }
+    else {
+        for (var i = 0; i < offres.length; i++) {
+            var offre = document.createElement("p");
+            offre.innerText = offres[i].title;
+            div.appendChild(offre);
+        }
+    }
+
+
+    setFooter("Dernière mise à jour : " + new Date(lastUpdate).toFR(true));
 
     // On place le focus, cela permet de résoudre le problème de hauteur de la zone
     document.getElementById("messageZone").focus();
