@@ -65,7 +65,10 @@
     setInterval(check_and_get_actus, 60 * 1000);
 
     UpdateBPCache();
-    setInterval(UpdateBPCache, 30 * 60 * 1000);
+    setInterval(UpdateBPCache, 10 * 60 * 1000);
+
+    UpdateEmploiCache();
+    setInterval(UpdateEmploiCache, 10 * 60, 1000);
 
     update_forum_cache();
     setInterval(update_forum_cache, 60 * 1000);
@@ -134,6 +137,10 @@
                         sendResponse(JSON.parse(localStorage["PdNBonsPlansLastCheck"]));
                         break;
 
+                    case "askEmploiCache":
+                        sendResponse(JSON.parse(localStorage["PCiEmploiLastCheck"]));
+                        break;
+
                     case "clearNewActusCount":
                         sessionStorage[newActusCount.localVarName] = 0;
                         updateBadgeAndNotify("", false);
@@ -165,6 +172,13 @@
     function UpdateBPCache() {
         PdN.getBonsPlans(function (listeBonsPlans) {
             localStorage["PdNBonsPlansLastCheck"] = JSON.stringify(listeBonsPlans);
+        });
+    }
+
+    // La fonction qui met en cache les informations des bons plans
+    function UpdateEmploiCache() {
+        PCi.emploi.get(function (offres) {
+            localStorage["PCiEmploiLastCheck"] = JSON.stringify(offres);
         });
     }
 
