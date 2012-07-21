@@ -68,7 +68,7 @@
     setInterval(UpdateBPCache, 10 * 60 * 1000);
 
     UpdateEmploiCache();
-    setInterval(UpdateEmploiCache, 10 * 60, 1000);
+    setInterval(UpdateEmploiCache, 10 * 60 * 1000);
 
     update_forum_cache();
     setInterval(update_forum_cache, 60 * 1000);
