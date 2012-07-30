@@ -397,8 +397,15 @@ function update_content_forum(div, forumInfos) {
             n_link.parentNode.insertBefore(part_2, n_link);
         }
         else {
-            m_zone.innerText = "Vous n'êtes pas connecté sur le forum";
+            m_zone.innerText = "Vous n'êtes pas connecté sur ";
             m_zone.className = "alert alert-error message_center";
+            
+            var forum_link = document.createElement("a");
+            forum_link.href = "http://forum.pcinpact.com/index.php?app=core&module=global&section=login";
+            forum_link.target = "_blank";
+            forum_link.innerText = "le forum";
+            
+            m_zone.appendChild(forum_link);
         }
 
         return m_zone;
