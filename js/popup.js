@@ -302,10 +302,14 @@ function update_content_cal(div) {
 
 // La fonction qui gère la zone dédié aux emplois
 function update_content_emploi(div, data) {
+    
     // On vide la zone
     empty_zone(div);
-
+    
+    // On récupères les infos utile depuis l'objet
     var offres = data.list, lastUpdate = data.lastUpdateDate;
+    
+    // Si aucune offre n'est détectée, on affiche un message spécifique
     if (offres.length === 0) {
         var message = document.createElement("p");
         message.innerText = "Aucune offre d'emploi n'a été trouvée. Un problème ? Retrouvez les ";
@@ -322,15 +326,37 @@ function update_content_emploi(div, data) {
         message.appendChild(link);
         message.appendChild(point);
     }
+    // Si l'on détecte des offres d'emploi, on affiche un bloc pour chacune d'elle
     else {
         for (var i = 0; i < offres.length; i++) {
-            var offre = document.createElement("p");
-            offre.innerText = offres[i].title;
+            var offre = document.createElement("div");
+            offre.className = "bloc_actu";
+            
+            var logo = document.createElement("img");
+            logo.src = "http://www.pcinpact.com/images/common/remixJob/avatar-entreprise.jpg";
+            logo.align = "left";
+            logo.hspace = 5;
+            logo.width = 50;
+            logo.style = "border:1px solid black";
+            
+            var offre_link = document.createElement("a");
+            offre_link.href = offres[i].url;
+            offre_link.innerText = offres[i].title;
+            offre_link.target = "_blank";
+            
+            var ss_titre = document.createElement("div");
+            ss_titre.className = "ss_titre";
+            ss_titre.innerText = offres[i].description;
+            
             div.appendChild(offre);
+            offre.appendChild(logo);
+            offre.appendChild(offre_link);
+            offre.appendChild(ss_titre);
+            
         }
     }
-
-
+    
+    // On met en place le footer
     setFooter("Dernière mise à jour : " + new Date(lastUpdate).toFR(true));
 
     // On place le focus, cela permet de résoudre le problème de hauteur de la zone
