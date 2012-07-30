@@ -1,4 +1,4 @@
-/*  Copyright © 2011-2012 LEGRAND David <david@pcinpact.com>    
+/*  Copyright © 2011-2012 LEGRAND David <david@pcinpact.com>
 
  This file is part of PC INpact Toolkit for Chrome™.
 
@@ -31,7 +31,9 @@ window.addEventListener("DOMContentLoaded", function () {
     // On récupère le nombre d'actus / brèves
     var newActusCount;
 
-    chrome.extension.sendRequest({message:"getNewActusCount"}, function (response) {
+    chrome.extension.sendRequest({
+        message:"getNewActusCount"
+    }, function (response) {
 
         newActusCount = response;
 
@@ -39,7 +41,9 @@ window.addEventListener("DOMContentLoaded", function () {
         checkSectionToOpen(newActusCount);
 
         // On effectue un RAZ du nombre d'actus / brèves
-        chrome.extension.sendRequest({message:"clearNewActusCount"});
+        chrome.extension.sendRequest({
+            message:"clearNewActusCount"
+        });
 
         // On affiche le header
         show_header(false);
@@ -51,7 +55,7 @@ window.addEventListener("DOMContentLoaded", function () {
 }, false);
 
 function checkSectionToOpen(newActusCount) {
-// On définit la rubrique à ouvrir, et on l'active dans le menu
+    // On définit la rubrique à ouvrir, et on l'active dans le menu
     // Par défaut, ou si le nombre d'actus / brèves à lire est > 0, on ouvre "home"
     if (!localStorage["lastRub"] || (newActusCount && parseInt(newActusCount) > 0)) localStorage["lastRub"] = "home";
 
@@ -102,7 +106,9 @@ function show_header(lite) {
     user_zone.style.display = lite ? "none" : "block";
 
     // On demande les informations relatives à l'utilisateur et on
-    chrome.extension.sendRequest({message:"ask_user_cache"}, function (user) {
+    chrome.extension.sendRequest({
+        message:"ask_user_cache"
+    }, function (user) {
 
         // On définit les textes qui seront utilisés
         var txt_premium = "Merci pour votre abonnement Premium !";
@@ -135,7 +141,9 @@ function show_header(lite) {
 
             // Si l'élément créé est cliqué, on déconnecte l'utilisateur
             document.getElementById("menu_deco").addEventListener("click", function () {
-                chrome.tabs.create({"url":"http://www.pcinpact.com/Account/LogOff?url=http%3A%2F%2Fwww.pcinpact.com%2F"});
+                chrome.tabs.create({
+                    "url":"http://www.pcinpact.com/Account/LogOff?url=http%3A%2F%2Fwww.pcinpact.com%2F"
+                });
             });
         }
 
@@ -186,7 +194,9 @@ function fill_in_container(type) {
 
     switch (type) {
         case "bp":
-            chrome.extension.sendRequest({message:"ask_bp_cache"}, function (response) {
+            chrome.extension.sendRequest({
+                message:"ask_bp_cache"
+            }, function (response) {
                 update_content_bp(mainDiv, response);
             });
             break;
@@ -196,19 +206,25 @@ function fill_in_container(type) {
             break;
 
         case "emploi":
-            chrome.extension.sendRequest({message:"askEmploiCache"}, function (response) {
+            chrome.extension.sendRequest({
+                message:"askEmploiCache"
+            }, function (response) {
                 update_content_emploi(mainDiv, response);
             });
             break;
 
         case "forum":
-            chrome.extension.sendRequest({message:"ask_forum_cache"}, function (response) {
+            chrome.extension.sendRequest({
+                message:"ask_forum_cache"
+            }, function (response) {
                 update_content_forum(mainDiv, response);
             });
             break;
 
         case "premium":
-            chrome.extension.sendRequest({message:"ask_user_cache"}, function (response) {
+            chrome.extension.sendRequest({
+                message:"ask_user_cache"
+            }, function (response) {
                 update_content_premium(mainDiv, response);
             });
             break;
@@ -218,7 +234,9 @@ function fill_in_container(type) {
             break;
 
         default:
-            chrome.extension.sendRequest({message:"ask_news_cache"}, function (response) {
+            chrome.extension.sendRequest({
+                message:"ask_news_cache"
+            }, function (response) {
                 update_content_news(mainDiv, response, type);
             });
             break;
@@ -271,7 +289,9 @@ function update_content_bp(div, bp_infos) {
     div.appendChild(bloc_all);
 
     document.getElementById("all_bp").addEventListener("click", function () {
-        chrome.tabs.create({"url":"http://www.prixdunet.com/bon-plan.html?page=1&type=0&motcle=&order=nb_lectures&waypopu=desc"});
+        chrome.tabs.create({
+            "url":"http://www.prixdunet.com/bon-plan.html?page=1&type=0&motcle=&order=nb_lectures&waypopu=desc"
+        });
     }, false);
 
     setFooter("Dernière mise à jour : " + new Date(bp_infos.lastUpdateDate).toFR(true));
@@ -302,13 +322,13 @@ function update_content_cal(div) {
 
 // La fonction qui gère la zone dédié aux emplois
 function update_content_emploi(div, data) {
-    
+
     // On vide la zone
     empty_zone(div);
-    
+
     // On récupères les infos utile depuis l'objet
     var offres = data.list, lastUpdate = data.lastUpdateDate;
-    
+
     // Si aucune offre n'est détectée, on affiche un message spécifique
     if (offres.length === 0) {
         var message = document.createElement("p");
@@ -331,31 +351,45 @@ function update_content_emploi(div, data) {
         for (var i = 0; i < offres.length; i++) {
             var offre = document.createElement("div");
             offre.className = "bloc_actu";
-            
+
             var logo = document.createElement("img");
             logo.src = "http://www.pcinpact.com/images/common/remixJob/avatar-entreprise.jpg";
             logo.align = "left";
             logo.hspace = 5;
             logo.width = 50;
             logo.style = "border:1px solid black";
-            
+
             var offre_link = document.createElement("a");
             offre_link.href = offres[i].url;
             offre_link.innerText = offres[i].title;
             offre_link.target = "_blank";
-            
+
             var ss_titre = document.createElement("div");
             ss_titre.className = "ss_titre";
             ss_titre.innerText = offres[i].description;
-            
+
             div.appendChild(offre);
             offre.appendChild(logo);
             offre.appendChild(offre_link);
             offre.appendChild(ss_titre);
-            
+
         }
+
+        var bloc_all = document.createElement("div");
+        bloc_all.className = "alert alert-info bloc-fin";
+        bloc_all.align = "center";
+        bloc_all.style.cursor = "pointer";
+        bloc_all.innerText = "Accéder à toutes les offres d'emploi";
+        bloc_all.id = "all_offres";
+        div.appendChild(bloc_all);
+
+        document.getElementById("all_offres").addEventListener("click", function () {
+            chrome.tabs.create({
+                "url":"http://www.pcinpact.com/emploi"
+            });
+        }, false);
     }
-    
+
     // On met en place le footer
     setFooter("Dernière mise à jour : " + new Date(lastUpdate).toFR(true));
 
@@ -399,12 +433,12 @@ function update_content_forum(div, forumInfos) {
         else {
             m_zone.innerText = "Vous n'êtes pas connecté sur ";
             m_zone.className = "alert alert-error message_center";
-            
+
             var forum_link = document.createElement("a");
             forum_link.href = "http://forum.pcinpact.com/index.php?app=core&module=global&section=login";
             forum_link.target = "_blank";
             forum_link.innerText = "le forum";
-            
+
             m_zone.appendChild(forum_link);
         }
 
@@ -501,7 +535,7 @@ function update_content_news(div, news, type) {
 
             comment_bloc.appendChild(comment_link);
 
-            /*            // On créé le bloc indiquant le nombre de partages sur les réseaux sociaux
+        /*            // On créé le bloc indiquant le nombre de partages sur les réseaux sociaux
              var social_bloc = document.createElement("span");
              social_bloc.className = "label label-success";
              social_bloc.innerText = news.List[key].socialCount.total;
@@ -528,7 +562,9 @@ function update_content_news(div, news, type) {
             bloc_all.id = "all_actus";
             div.appendChild(bloc_all);
             document.getElementById("all_actus").addEventListener("click", function () {
-                chrome.tabs.create({"url":"http://www.pcinpact.com"});
+                chrome.tabs.create({
+                    "url":"http://www.pcinpact.com"
+                });
             }, false);
             break;
 
@@ -538,7 +574,9 @@ function update_content_news(div, news, type) {
             div.appendChild(bloc_all);
 
             document.getElementById("all_breves").addEventListener("click", function () {
-                chrome.tabs.create({"url":"http://www.pcinpact.com/toutes-les-breves.htm"});
+                chrome.tabs.create({
+                    "url":"http://www.pcinpact.com/toutes-les-breves.htm"
+                });
             }, false);
             break;
     }
@@ -737,7 +775,9 @@ function update_content_search(div) {
                     url_s_pci += "5";
                     break;
             }
-            chrome.tabs.create({"url":url_s_pci});
+            chrome.tabs.create({
+                "url":url_s_pci
+            });
         }, false);
     };
 
@@ -758,7 +798,9 @@ function update_content_search(div) {
                     url_s_pdn += "?type=test";
                     break;
             }
-            chrome.tabs.create({"url":url_s_pdn});
+            chrome.tabs.create({
+                "url":url_s_pdn
+            });
         }, false);
     };
 
