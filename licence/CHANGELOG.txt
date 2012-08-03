@@ -12,6 +12,12 @@ Forum : http://pci.im/forum-pci-chrome
 
 ---------------
 ---------------
+v0.4.0.3 (03/08/2012)
+- Ajout de la section emploi
+- Intégration des images dédiées
+- Intégration des Essentiels du jour
+- Correctifs divers
+
 v0.4.0.2 (12/07/2012) :
 - Mise en place des notifications
 - Système de nettoyage du LocalStorage des versions 0.3 et inférieures
