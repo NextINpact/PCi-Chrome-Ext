@@ -482,12 +482,15 @@ function update_content_news(div, news, type) {
             bloc_actu.className = "bloc_actu";
 
             var img = document.createElement("img");
-            img.src = "http://www.pcinpact.com/images/clair/categories/" + news.List[key].UrlIcone + ".png";
+            //img.src = "http://www.pcinpact.com/images/clair/categories/" + news.List[key].UrlIcone + ".png";
+            img.src = news.List[key].DedicatedImgUrl;
+            img.height = 40;
             img.align = "left";
             img.hspace = 5;
 
             var img_link = document.createElement("a");
-            img_link.href = "http://www.pcinpact.com/?f_rub=" + news.List[key].IdRubrique;
+            //img_link.href = "http://www.pcinpact.com/?f_rub=" + news.List[key].IdRubrique;
+            img_link.href = news.List[key].AbsoluteUrl;
             img_link.target = "_blank";
 
             var news_link = document.createElement("a");
@@ -495,7 +498,12 @@ function update_content_news(div, news, type) {
             news_link.target = "_blank";
             if (news.List[key].IsBreve && type == "home") news_link.innerHTML = "[Brève] " + news.List[key].Title;
             else news_link.innerText = news.List[key].Title;
-
+            
+            var img_fire = document.createElement("img");
+            img_fire.src = "/pics/flamme16px.png";
+            img_fire.title = "Les essentiels du jour"
+            img_fire.align = "right";
+            
             var comment_bloc = document.createElement("span");
             comment_bloc.className = "comment_bloc";
 
@@ -518,6 +526,7 @@ function update_content_news(div, news, type) {
             bloc_actu.appendChild(img_link);
             img_link.appendChild(img);
             bloc_actu.appendChild(news_link);
+            if (news.List[key].IsImportant) bloc_actu.appendChild(img_fire);
             bloc_actu.appendChild(new_line);
             bloc_actu.appendChild(ss_bloc);
             ss_bloc.appendChild(comment_bloc);
