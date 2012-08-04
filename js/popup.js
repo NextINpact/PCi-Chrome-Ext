@@ -486,7 +486,7 @@ function update_content_news(div, news, type) {
             img.src = news.List[key].DedicatedImgUrl;
             img.height = 40;
             img.align = "left";
-            img.hspace = 5;
+            img.className = "actuIcone"
 
             var img_link = document.createElement("a");
             //img_link.href = "http://www.pcinpact.com/?f_rub=" + news.List[key].IdRubrique;
@@ -532,7 +532,7 @@ function update_content_news(div, news, type) {
             ss_bloc.appendChild(comment_bloc);
             comment_bloc.appendChild(comment_link);
 
-            if (news.List[key].LastCommentUrl != null && news.List[key].NbNewComments != undefined && news.List[key].NbNewComments > 0) {
+            if (news.List[key].LastCommentUrl != null && news.List[key].NbNewComments != undefined && news.List[key].NbNewComments > 0 && news.List[key].NbNewComments != news.List[key].NbComments) {
                 var new_comment_link = document.createElement("a");
                 new_comment_link.className = "badge badge-important";
                 new_comment_link.target = "_blank";
@@ -542,6 +542,16 @@ function update_content_news(div, news, type) {
                 comment_bloc.appendChild(document.createTextNode(" "));
             }
 
+            else if (news.List[key].LastCommentUrl != null && news.List[key].NbNewComments != undefined && news.List[key].NbNewComments == 0 && news.List[key].NbComments != 0) {
+                var new_comment_link = document.createElement("a");
+                new_comment_link.className = "badge badge-defaut";
+                new_comment_link.target = "_blank";
+                new_comment_link.href = news.List[key].LastCommentUrl;
+                new_comment_link.innerText = "+" + news.List[key].NbNewComments;
+                comment_bloc.appendChild(new_comment_link);
+                comment_bloc.appendChild(document.createTextNode(" "));
+            }
+            
             comment_bloc.appendChild(comment_link);
 
         /*            // On créé le bloc indiquant le nombre de partages sur les réseaux sociaux
