@@ -1,20 +1,21 @@
 /* == Général == */
 
 body {
-	width: 650px;
-	overflow-x: hidden;
-	overflow-y: auto;
-	background-color: #FDFDFD;
+    width: 650px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: #FDFDFD;
 }
 
 .message_center {
-	text-align: center;
+    text-align: center;
 }
 
 .cutIfTooLong {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 /* == Header de l'extension  == */
 
 #header, #welcome {
@@ -30,81 +31,121 @@ body {
 }
 
 #logo {
-	margin-right: 10px;
-	padding-top: 14px;
-	float: left;
+    margin-right: 10px;
+    padding-top: 14px;
+    float: left;
 }
 
+#menu_deco {
+    float: right;
+}
+
+#pdnSearchBox {
+    width: 320px;
+    float: right;
+}
+
+#pciSearchBox {
+    width: 320px;
+    float: left;
+}
 .navbar .divider-vertical {
-	margin: 0px;
+    margin: 0px;
 }
 
-/* == Actualités == */
+/* == Actualités & co == */
 
 .header_date {
-	border-style: solid;
+    border-style: solid;
 }
 
 .bloc-date, .bloc-fin {
-	background-color: #000000;
-	border-color: #000000;
-	color: #ffffff;
-	width: 50%;
-	font-weight: bold;
-	padding: 10px 20px 10px 20px;
-	margin: auto;
-	margin-bottom: 15px;
-	margin-top: 10px;
+    background-color: #000000;
+    border-color: #000000;
+    color: #ffffff;
+    width: 50%;
+    font-weight: bold;
+    padding: 10px 20px 10px 20px;
+    margin: auto;
+    margin-bottom: 15px;
+    margin-top: 10px;
 }
 
 .bloc-fin {
-	width: 40%;
-	margin-bottom: 10px;
+    width: 40%;
+    margin-bottom: 10px;
 }
 
 .bloc-fin:hover {
-	color: orange;
+    color: orange;
 }
 
-.bloc_actu {
-	padding-bottom: 10px;
-	width: 95%;
-	margin: auto;
-	margin-bottom: 10px;
-	border-bottom-style: groove;
+.blocActu {
+
+    width: 95%;
+    height: 75px;
+    margin: auto;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    
+    border-bottom-style: groove;
 }
 
-.bloc_actu a, .black_link a {
-	color: #000000;
-	font-weight: bold;
+.blocActu:hover{
+    background-color: #dddddd;
+    border-radius: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
-.bloc_actu a:hover, .black_link a:hover {
-	color: #DA7012;
-	font-weight: bold;
-	text-decoration: none;
+.blocActu a, .black_link a {
+    color: #000000;
+    font-weight: bold;
+}
+
+.blocActu a:hover, .black_link a:hover {
+    color: #DA7012;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.actuIcone{
+    margin-right: 5px;
+    float: left;
+    vertical-align: text-top;
+    height: 75px;
+}
+
+.titre{
+    font-size: medium;
+}
+
+.dateBloc, .ss_titre {
+    font-size: 11px;
+    font-weight: bold;
+    color: #1b5072;
 }
 
 .ss_titre {
-	font-size: x-small;
+    font-style: italic;
 }
 
 .ss_titre a {
-	color: white;
-	font-weight: bold;
+    color: white;
+    font-weight: bold;
 }
 
-.comment_bloc {
-	float: right;
+.commentBloc {
+    float: right;
 }
 
 /* == Footer == */
 
 #footer {
-	float: right;
-	text-align: center;
-	width: 350px;
-	margin-top: 10px;
-	padding-left: 10px;
-	padding-right: 5px;
+    float: right;
+    text-align: center;
+    width: 350px;
+    margin-top: 10px;
+    padding-left: 10px;
+    padding-right: 5px;
 }

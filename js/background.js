@@ -29,57 +29,10 @@
 
         // Si le LS n'était pas vide, on notifie l'utilisateur qu'il s'agissait d'une mise à jour qui s'est bien déroulée
         if (localStorage.length != 0)
-            notify_txt("", "", "La mise à jour depuis l'ancienne version de l'extension s'est bien déroulée");
+            notify_txt("", "", "L'installation de la nouvelle version de l'extension s'est bien déroulée");
     }
 
     setDefaultValues();
-
-    // On indique que l'extension est lancée
-    PCi.tools.logMessage("Extension lancée", false);
-
-    // On lance la gestion de la recherche via l'Omnibox
-    ChromeOmniListen();
-    PCi.tools.logMessage("Gestion de l'Omnibox : OK", false);
-
-    // On met en place la communication entre la page de background et le popup
-    ListenFromPopup();
-    PCi.tools.logMessage("Mise en place de la communication background / popup : OK", false);
-
-    // On met en place l'analyse des requêtes pour détecter les login / logout
-    // On sépare les deux parce que la méthodologie n'est pas la même
-    chrome.webRequest.onResponseStarted.addListener(function () {
-        update_user_cache();
-        PCi.tools.logMessage("Connexion de l'utilisateur");
-    }, {urls:["http://www.pcinpact.com/Account/ConnectLogOn*"]});
-
-    chrome.webRequest.onBeforeRedirect.addListener(function () {
-        update_user_cache();
-        PCi.tools.logMessage("Déconnexion de l'utilisateur");
-    }, {urls:["http://www.pcinpact.com/Account/LogOff*"]});
-
-    PCi.tools.logMessage("Mise en place de l'analyse du Login / Logout : OK", false);
-
-    // On met en cache les données des actualités et des utilisateurs
-    // On lance une répétiton toutes les minutes
-    check_and_get_actus();
-    setInterval(check_and_get_actus, 60 * 1000);
-
-    UpdateBPCache();
-    setInterval(UpdateBPCache, 10 * 60 * 1000);
-
-    UpdateEmploiCache();
-    setInterval(UpdateEmploiCache, 10 * 60 * 1000);
-
-    update_forum_cache();
-    setInterval(update_forum_cache, 60 * 1000);
-
-    update_user_cache();
-    setInterval(update_user_cache, 10 * 60 * 1000);
-
-    PCi.tools.logMessage("Gestion des caches : OK", false);
-
-    // On indique lorsque le premier check a été effectué
-    if (!sessionStorage["firstCheck"]) sessionStorage["firstCheck"] = "true";
 
     // L'objet de gestion du nombre de nouvelles actualités
     var newActusCount = {
@@ -92,15 +45,14 @@
             // Si un compteur avait déjà été créé, on récupère sa valeur
             if (sessionStorage[newActusCount.localVarName]) countNew = parseInt(sessionStorage[newActusCount.localVarName]);
 
-            PCi.tools.logMessage("Nouvelles actus : " + countNew);
             return countNew;
         },
 
-        inc:function (newActus) {
+        inc:function () {
             var countNew = newActusCount.get(), countFinal;
 
             // On incrémente le compteur et on l'enregistre
-            countFinal = parseInt(countNew) + newActus.length;
+            countFinal = parseInt(countNew) + 1;
             sessionStorage[newActusCount.localVarName] = countFinal;
 
             PCi.tools.logMessage("Compteur : " + countFinal);
@@ -108,11 +60,79 @@
 
     };
 
+    // On lance la gestion de la recherche via l'Omnibox
+    ChromeOmniListen();
+
+    // On met en place la communication entre la page de background et le popup
+    ListenFromPopup();
+
+    // On met en place l'analyse des requêtes pour détecter les login / logout
+    // On sépare les deux parce que la méthodologie n'est pas la même
+    chrome.webRequest.onResponseStarted.addListener(function () {
+        UpdateUserCache();
+        PCi.tools.logMessage("Connexion de l'utilisateur");
+    }, {urls:["http://www.pcinpact.com/Account/ConnectLogOn*"]});
+
+    chrome.webRequest.onBeforeRedirect.addListener(function () {
+        UpdateUserCache();
+        PCi.tools.logMessage("Déconnexion de l'utilisateur");
+    }, {urls:["http://www.pcinpact.com/Account/LogOff*"]});
+
+    UpdateBPCache();
+    setInterval(UpdateBPCache, 10 * 60 * 1000);
+
+    UpdateEmploiCache();
+    setInterval(UpdateEmploiCache, 10 * 60 * 1000);
+
+    UpdateForumCache();
+    setInterval(UpdateForumCache, 60 * 1000);
+
+    UpdateUserCache();
+    setInterval(UpdateUserCache, 10 * 60 * 1000);
+
+    // On indique lorsque le premier check a été effectué
+    //if (!sessionStorage["firstCheck"]) sessionStorage["firstCheck"] = "true";
+
+    websocketLaunch();
+
     // La fonction qui indique les valeurs par défaut
     function setDefaultValues() {
         localStorage["notifCheck"] = 1;
         localStorage["notifDelay"] = 10;
         localStorage["PCiEnableLog"] = 1;
+    }
+
+    // La fonction qui gère les websockets
+    function websocketLaunch() {
+
+        // On initialise
+        PCiRT.Init();
+
+        // On gère les évènements de connexion / déconnexion
+        window.PCiRT.Engine.AttachEvent('Actu', 'OnConnected', function (message) {
+            PCi.tools.logMessage("WS : Utilisateur connecté");
+        });
+
+        window.PCiRT.Engine.AttachEvent('Actu', 'OnDisconnected', function (message) {
+            PCi.tools.logMessage("WS : Utilisateur déconnecté");
+
+            // Si l'utilisateur est déconnecté, on le reconnecte
+            window.PCiRT.Services.Actu.Connect();
+        });
+
+        // Lorsqu'une nouvelle actualité arrive
+        window.PCiRT.Engine.AttachEvent('Actu', 'OnMessage', function (message) {
+
+            // On incrémente le compteur et on met à jour le badge + notification
+            newActusCount.inc();
+            updateBadgeAndNotify(JSON.parse(message.data), true);
+
+            // Au bout de 5 minutes, on met à jour le flux d'actus
+            setTimeout(PCi.actus.check, 5 * 60 * 1000);
+        });
+
+        // On lance la connexion
+        window.PCiRT.Services.Actu.Connect();
     }
 
     // La fonction qui déclare les réponses aux requêtes qui peuvent être envoyées par le popup
@@ -153,21 +173,6 @@
             });
     }
 
-    // La fonction qui récupère des actualités
-    function check_and_get_actus() {
-
-        // On récupère les nouvelles actualités
-        // Au passage, cela met en cache le JSON d'actualités
-        var newActus = PCi.actus.check();
-
-        // S'il y a de nouvelles actualités et que l'on n'est pas au premier lancement
-        // On incrémente le compteur et on met à jour le badge
-        if (sessionStorage["firstCheck"] === "true" && newActus.List.length > 0) {
-            newActusCount.inc(newActus.List);
-            updateBadgeAndNotify(newActus.List, true);
-        }
-    }
-
     // La fonction qui met en cache les informations des bons plans
     function UpdateBPCache() {
         PdN.getBonsPlans(function (listeBonsPlans) {
@@ -183,33 +188,34 @@
     }
 
     // La fonction qui met en cache les informations du forum
-    function update_forum_cache() {
-        try {
-            PCi.forum.get(function (forumInfos) {
-                localStorage["PCiForumLastCheck"] = JSON.stringify(forumInfos);
-            });
+    function UpdateForumCache() {
 
-            // On récupère l'objet dans une variable
-            var forum_infos = JSON.parse(localStorage["PCiForumLastCheck"]);
+        // On déclare les variables utiles
+        var oldInfos = JSON.parse(localStorage["PCiForumLastCheck"]), forumInfos, isNews = false;
+
+        // On récupère les infos du forum et on les enregistre dans le LS
+        PCi.forum.get(function (infos) {
+            localStorage["PCiForumLastCheck"] = JSON.stringify(infos);
+            forumInfos = JSON.parse(localStorage["PCiForumLastCheck"]);
+
+            // S'il y a eu du changement dans les messages ou les notifications, on l'indique via isNews
+            // On ne notifie que si le nombre est supérieur à l'ancien
+            if (oldInfos.messages.count < infos.messages.count || oldInfos.notifications.count < infos.notifications.count) isNews = true;
 
             // Si l'on a récupéré des informations depuis le forum et que des messages sont présents, on lance une mise à jour du badge
-            if (forum_infos.messages && forum_infos.notifications && (forum_infos.messages.count > 0 || forum_infos.notifications.count > 0))
-                updateBadgeAndNotify("", true);
-        }
-            // Si une erreur intervient, on la loggue
-        catch (e) {
-            console.log(new Date().toFR(true) + " - Erreur : " + e.message);
-        }
+            if (infos.messages && infos.notifications && (infos.messages.count > 0 || infos.notifications.count > 0))
+                updateBadgeAndNotify("", isNews);
+        });
     }
 
     // La fonction qui met en cache les informations de l'utilisateur
-    function update_user_cache() {
-        var user_infos = PCi.user.getInfos();
-        localStorage["PCiUserInfos"] = JSON.stringify(user_infos);
+    function UpdateUserCache() {
+        var userInfos = PCi.user.getInfos();
+        localStorage["PCiUserInfos"] = JSON.stringify(userInfos);
 
-        // Si l'utilisateur est Premium, on stocke le QR_Code dans le localStorage
-        if (user_infos.IsPremium) {
-            PCi.tools.urlToLocalBlob(user_infos.PremiumInfo.UrlQr, function (data) {
+        // Si l'utilisateur est Premium, on stocke le QR Code dans le localStorage
+        if (userInfos.IsPremium) {
+            PCi.tools.urlToLocalBlob(userInfos.PremiumInfo.UrlQr, function (data) {
                 localStorage["qrCodeBlob"] = data;
             });
         }
@@ -218,7 +224,7 @@
     }
 
     // La fonction qui gère la mise à jour du badge et les notifications
-    function updateBadgeAndNotify(newActus, sendNotif) {
+    function updateBadgeAndNotify(actu, sendNotif) {
 
         // On définit les variables utiles
         var appName = "PC INpact Toolkit for Chrome™";
@@ -231,22 +237,19 @@
 
         // S'il est positif et que l'on n'est pas dans la phase de 1st check
         // On met à jour le badge au niveau des actualités et on affiche les notifications
-        if (count > 0 && sessionStorage["firstCheck"] === "true") {
+        if (count > 0) {
             set_badge(sessionStorage[newActusCount.localVarName], appName, colorRed);
 
-            // On affiche une notification pour chaque actualité repérée
-            for (var key in newActus) {
-                if (sendNotif) notify_txt("", "Nouvelle actualité", newActus[key].Title);
-            }
+            if (sendNotif && actu.Titre) notify_url("/html/notif.html?" + encodeURI(JSON.stringify(actu)));
         }
         // S'il n'y a pas de nouvelles actus, on regarde du côté du forum
         else {
 
             // On récupère les infos du forum dans le cache
-            var forum_infos = JSON.parse(localStorage["PCiForumLastCheck"]);
+            var forumInfos = JSON.parse(localStorage["PCiForumLastCheck"]);
 
             // S'il y a de nouveaux contenus, on met à jour le badge et on affiche des notifications
-            if (forum_infos.messages && forum_infos.notifications && (forum_infos.messages.count > 0 || forum_infos.notifications.count > 0)) {
+            if (forumInfos.messages && forumInfos.notifications && (forumInfos.messages.count > 0 || forumInfos.notifications.count > 0)) {
 
                 var forumNotificationText = "Vous avez de nouvelles notifications sur le forum";
                 set_badge("!", forumNotificationText, colorGreen);
