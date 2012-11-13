@@ -5,6 +5,7 @@ body {
     overflow-x: hidden;
     overflow-y: auto;
     background-color: #FDFDFD;
+    font-size: 13px;
 }
 
 .message_center {
@@ -18,13 +19,24 @@ body {
 
 /* == Header de l'extension  == */
 
-#header, #welcome {
+#header {
     padding-top: 10px;
 
 }
 
+h3 {
+    font-size: 22px;
+    margin-bottom: 2px;
+    margin-top: 6px;
+}
+
+
+#thanks{
+    margin-top: -5px;
+}
+
 #welcome_zone {
-    padding-bottom: 10px;
+    padding-bottom: 15px;
     border-bottom-style: solid;
     border-bottom-color: #ffffff;
     border-width: 1px;
@@ -38,6 +50,16 @@ body {
 
 #menu_deco {
     float: right;
+    margin-top: -5px;
+    font-size: 15px;
+}
+
+#menu{
+    padding: 0px;
+}
+
+.navbar .nav li a{
+    padding: 10px 10px 10px;
 }
 
 #pdnSearchBox {
