@@ -151,7 +151,7 @@
             var oldInfos, newContent = false;
 
             // On récupère les anciennes infos si elles existent, sinon on utilise celles qui sont passées en paramètre
-            if (!localStorage["PCiForumLastCheck"]) oldInfos = JSON.parse(localStorage["PCiForumLastCheck"]);
+            if (localStorage["PCiForumLastCheck"]) oldInfos = JSON.parse(localStorage["PCiForumLastCheck"]);
             else oldInfos = infos;
 
             // On stocke les infos passées en paramètre dans le LS pour une utilisation ultérieure
